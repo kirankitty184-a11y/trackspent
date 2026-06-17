@@ -17,7 +17,7 @@
             max-width: 420px;
             margin: 40px auto;
             background: white;
-            padding: 30px;
+            padding: 40px 30px;
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
@@ -71,12 +71,13 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyBMBGJRfWSj7p50NPBEbuRyISJN99n3gs",
-            authDomain: "trackspent-d2d17.firebaseapp.com",
-            projectId: "trackspent-d2d17",
-            storageBucket: "trackspent-d2d17.firebasestorage.app",
-            messagingSenderId: "7421351313",
-            appId: "1:7421351314:web:c44737431f175a030f1a3f"
+          apiKey: "AIzaSyBM8GjRfW5j7p50NPBEbuRyISjN99Wn3gs",
+          authDomain: "trackspent-d2d17.firebaseapp.com",
+          projectId: "trackspent-d2d17",
+          storageBucket: "trackspent-d2d17.firebasestorage.app",
+          messagingSenderId: "74213513134",
+          appId: "1:74213513134:web:c44737431f175a030f1a3f",
+          measurementId: "G-HR90QQC9R7"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -87,14 +88,14 @@
             const password = document.getElementById('password').value;
 
             if (!email || !password || password.length < 6) {
-                alert("Please enter a valid email and password (min 6 characters)");
+                alert("Please enter a valid email and password (minimum 6 characters)");
                 return;
             }
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    alert("✅ Account created successfully!\nYou can now Log In.");
-                    console.log("User:", userCredential.user.email);
+                    alert("✅ Account created successfully!\nNow you can Log In.");
+                    console.log("User created:", userCredential.user.email);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -114,7 +115,7 @@
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     alert("✅ Login successful! Welcome to TrackSpent.");
-                    console.log("Logged in as:", userCredential.user.email);
+                    console.log("Logged in:", userCredential.user.email);
                 })
                 .catch((error) => {
                     console.error(error);
