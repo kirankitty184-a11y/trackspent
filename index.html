@@ -71,7 +71,7 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyBMBGJRfWSj7p50NPBEbuRyISJN99n3gs", // Note: I kept your original but you can update if needed
+            apiKey: "AIzaSyBMBGJRfWSj7p50NPBEbuRyISJN99n3gs",
             authDomain: "trackspent-d2d17.firebaseapp.com",
             projectId: "trackspent-d2d17",
             storageBucket: "trackspent-d2d17.firebasestorage.app",
@@ -86,15 +86,15 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            if (!email || !password) {
-                alert("Please enter email and password");
+            if (!email || !password || password.length < 6) {
+                alert("Please enter a valid email and password (min 6 characters)");
                 return;
             }
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    alert("✅ Account created successfully! You can now log in.");
-                    console.log("User created:", userCredential.user);
+                    alert("✅ Account created successfully!\nYou can now Log In.");
+                    console.log("User:", userCredential.user.email);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -113,8 +113,8 @@
 
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    alert("✅ Login successful!");
-                    console.log("User logged in:", userCredential.user);
+                    alert("✅ Login successful! Welcome to TrackSpent.");
+                    console.log("Logged in as:", userCredential.user.email);
                 })
                 .catch((error) => {
                     console.error(error);
