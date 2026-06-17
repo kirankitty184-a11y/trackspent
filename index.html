@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrackSpent - Daily Money Clarity</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -18,272 +13,59 @@
             padding: 20px;
             color: #333;
         }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* Auth Section */
-        .auth-section {
+        .auth-section, .summary-card, .entry-card, .history-card, .csv-section {
             background: white;
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-
-        .auth-section h2 {
-            margin-bottom: 20px;
-            text-align: center;
-            color: #667eea;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .btn {
+        .auth-section h2 { text-align: center; color: #667eea; margin-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, select {
             width: 100%;
             padding: 12px;
-            background: #667eea;
-            color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background: #5568d3;
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
             margin-top: 10px;
         }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-secondary { background: #f0f0f0; color: #333; }
+        .btn-logout { background: #ff6b6b; padding: 8px 16px; font-size: 14px; width: auto; }
+        .tab { flex: 1; padding: 12px; background: white; border: none; border-radius: 8px; cursor: pointer; }
+        .tab.active { background: #667eea; color: white; }
+        .tabs { display: flex; gap: 10px; margin: 20px 0; }
+        .total-amount { font-size: 48px; font-weight: 700; color: #667eea; }
+        .insight { padding: 12px; border-left: 4px solid #667eea; background: #f8f9ff; border-radius: 4px; margin: 15px 0; }
+        .insight.positive { border-left-color: #51cf66; background: #f1fce4; }
+        .insight.negative { border-left-color: #ff6b6b; background: #ffe8e8; }
+        .category-item, .history-item {
+            display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;
         }
-
-        /* Main App */
-        .app-section {
-            display: none;
-        }
-
-        .header {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .header h1 {
-            color: #667eea;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #999;
-            font-size: 14px;
-        }
-
-        .user-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-top: 1px solid #f0f0f0;
-            margin-top: 10px;
-            padding-top: 10px;
-        }
-
-        .user-info span {
-            font-size: 12px;
-            color: #667eea;
-        }
-
-        .btn-logout {
-            background: #ff6b6b;
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .btn-logout:hover {
-            background: #ff5252;
-        }
-
-        /* Daily Entry Card */
-        .entry-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .entry-card h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .form-row.full {
-            grid-template-columns: 1fr;
-        }
-
-        select, input[type="number"], input[type="date"] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .btn-primary {
-            background: #51cf66;
-        }
-
-        .btn-primary:hover {
-            background: #40c057;
-        }
-
-        /* Other styles remain the same */
-        .summary-card, .history-card, .csv-section {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .total-amount {
-            font-size: 40px;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .insight {
-            background: #f8f9ff;
-            padding: 12px;
-            border-left: 4px solid #667eea;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #555;
-            margin-top: 15px;
-            font-style: italic;
-        }
-
-        .insight.positive {
-            border-left-color: #51cf66;
-            background: #f1fce4;
-        }
-
-        .insight.negative {
-            border-left-color: #ff6b6b;
-            background: #ffe8e8;
-        }
-
-        .category-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #999;
-            padding: 20px;
-            font-size: 14px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px;
-            background: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            color: #999;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            color: #667eea;
-            font-size: 14px;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            .total-amount { font-size: 32px; }
-            .form-row { grid-template-columns: 1fr; }
-        }
+        .empty-state { text-align: center; color: #999; padding: 30px; }
+        .loading { display: none; text-align: center; color: #667eea; margin: 10px 0; }
+        .loading.show { display: block; }
     </style>
 </head>
 <body>
+
     <!-- Auth Section -->
     <div class="auth-section" id="authSection">
         <h2>TrackSpent</h2>
-        <p style="text-align: center; color: #999; font-size: 14px; margin-bottom: 20px;">Daily spending clarity in 30 seconds</p>
+        <p style="text-align:center; color:#999; margin-bottom:20px;">Daily spending clarity in 30 seconds</p>
+        
         <div class="form-group">
             <label>Email</label>
             <input type="email" id="email" placeholder="your@email.com">
@@ -292,41 +74,39 @@
             <label>Password</label>
             <input type="password" id="password" placeholder="••••••••">
         </div>
-        <button class="btn" onclick="handleSignUp()">Sign Up</button>
+        
+        <button class="btn btn-primary" onclick="handleSignUp()">Sign Up</button>
         <button class="btn btn-secondary" onclick="handleLogIn()">Log In</button>
     </div>
 
     <!-- Main App -->
-    <div class="app-section" id="appSection">
-        <!-- Header -->
-        <div class="header">
-            <h1>TrackSpent</h1>
-            <p>Daily spending clarity</p>
-            <div class="user-info">
-                <span id="userEmail">user@email.com</span>
+    <div class="app-section" id="appSection" style="display:none;">
+        <div class="auth-section">
+            <h2>TrackSpent</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="userEmail" style="color:#667eea; font-weight:500;"></span>
                 <button class="btn btn-logout" onclick="handleLogOut()">Log Out</button>
             </div>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="switchTab(this, 'today')">Today</button>
             <button class="tab" onclick="switchTab(this, 'history')">History</button>
             <button class="tab" onclick="switchTab(this, 'upload')">Import CSV</button>
         </div>
 
-        <!-- TODAY TAB -->
+        <!-- Today Tab -->
         <div id="todayTab">
-            <div class="summary-card" id="summaryCard">
-                <h2>Today You Spent</h2>
+            <div class="summary-card">
+                <h3>Today You Spent</h3>
                 <div class="total-amount" id="totalAmount">₹0</div>
                 <div id="insightText" class="insight"></div>
-                <div class="categories-list" id="categoriesList"></div>
+                <div id="categoriesList"></div>
             </div>
 
             <div class="entry-card">
-                <h3>Add Spending</h3>
-                <div class="form-row full">
+                <h3>Add New Spending</h3>
+                <div class="form-group">
                     <label>Category</label>
                     <select id="category">
                         <option value="Food & Drinks">🍔 Food & Drinks</option>
@@ -338,41 +118,44 @@
                         <option value="Other">📍 Other</option>
                     </select>
                 </div>
-                <div class="form-row">
-                    <input type="number" id="amount" placeholder="Amount" min="0">
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
                     <input type="date" id="date">
                 </div>
                 <button class="btn btn-primary" onclick="addSpending()">Add Spending</button>
             </div>
         </div>
 
-        <!-- HISTORY TAB -->
-        <div id="historyTab" style="display: none;">
+        <!-- History Tab -->
+        <div id="historyTab" style="display:none;">
             <div class="history-card">
                 <h3>Recent Transactions</h3>
-                <div id="historyList" class="empty-state">No spending recorded yet</div>
+                <div id="historyList" class="empty-state">No transactions yet</div>
             </div>
         </div>
 
-        <!-- UPLOAD TAB -->
-        <div id="uploadTab" style="display: none;">
+        <!-- CSV Upload Tab -->
+        <div id="uploadTab" style="display:none;">
             <div class="csv-section">
                 <h3>Import from Bank CSV</h3>
-                <p>Export your bank statement as CSV and upload here. Format should be: Date, Amount, Category</p>
-                <input type="file" id="csvFile" accept=".csv" onchange="handleCSVUpload(event)">
-                <button class="btn" onclick="document.getElementById('csvFile').click()">Choose CSV File</button>
-                <div class="loading" id="uploadLoading">Uploading...</div>
+                <p style="color:#666; margin-bottom:15px;">Format: Date,Amount,Category</p>
+                <input type="file" id="csvFile" accept=".csv" onchange="handleCSVUpload(event)" style="display:none;">
+                <button class="btn btn-primary" onclick="document.getElementById('csvFile').click()">Choose CSV File</button>
+                <div class="loading" id="uploadLoading">Processing...</div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
 
     <script>
-        // ==================== FIXED FIREBASE CONFIG ====================
         const firebaseConfig = {
             apiKey: "AIzaSyB8MGJRfWSj7p50NPBEbuRyISJN99n3gs",
             authDomain: "trackspent-d2d17.firebaseapp.com",
@@ -382,52 +165,36 @@
             appId: "1:7421351313:web:c44737431f175a030f1a3f"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Set today's date
+        // Set default date
         document.getElementById('date').valueAsDate = new Date();
 
-        // ==================== AUTH FUNCTIONS ====================
         function handleSignUp() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            if (!email || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
+            if (!email || !password) return alert("Please fill all fields");
 
             auth.createUserWithEmailAndPassword(email, password)
-                .then(result => {
-                    alert('Account created successfully!');
+                .then((result) => {
+                    alert("✅ Account created successfully!");
                     showApp(result.user);
                 })
-                .catch(error => {
-                    console.error(error);
-                    alert('Sign up error: ' + error.message);
-                });
+                .catch(err => alert("Signup Error: " + err.message));
         }
 
         function handleLogIn() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            if (!email || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
+            if (!email || !password) return alert("Please fill all fields");
 
             auth.signInWithEmailAndPassword(email, password)
-                .then(result => {
-                    showApp(result.user);
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert('Log in error: ' + error.message);
-                });
+                .then((result) => showApp(result.user))
+                .catch(err => alert("Login Error: " + err.message));
         }
 
         function handleLogOut() {
@@ -437,7 +204,6 @@
             });
         }
 
-        // ==================== MAIN APP ====================
         function showApp(user) {
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('appSection').style.display = 'block';
@@ -446,50 +212,39 @@
             loadHistoryData();
         }
 
-        // Tab Switching (Fixed)
         function switchTab(btn, tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
             document.getElementById('todayTab').style.display = tab === 'today' ? 'block' : 'none';
             document.getElementById('historyTab').style.display = tab === 'history' ? 'block' : 'none';
             document.getElementById('uploadTab').style.display = tab === 'upload' ? 'block' : 'none';
-
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
         }
 
-        // Add Spending
         function addSpending() {
             const amount = parseFloat(document.getElementById('amount').value);
             const category = document.getElementById('category').value;
             const date = document.getElementById('date').value;
 
-            if (!amount || amount <= 0 || !category || !date) {
-                alert('Please fill in all fields correctly');
-                return;
-            }
+            if (!amount || !category || !date) return alert("Please fill all fields");
 
             const user = auth.currentUser;
-            if (!user) return alert('You must be logged in');
-
             db.collection('users').doc(user.uid).collection('transactions').add({
-                amount: amount,
-                category: category,
-                date: date,
+                amount,
+                category,
+                date,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
+                alert("✅ Spending added!");
                 document.getElementById('amount').value = '';
                 loadTodayData();
                 loadHistoryData();
-                alert('Spending added successfully!');
-            }).catch(error => {
-                alert('Error adding spending: ' + error.message);
-            });
+            }).catch(err => alert("Error: " + err.message));
         }
 
-        // Load Today Data
         function loadTodayData() {
             const user = auth.currentUser;
             if (!user) return;
-
             const today = new Date().toISOString().split('T')[0];
 
             db.collection('users').doc(user.uid).collection('transactions')
@@ -500,128 +255,56 @@
                     const categories = {};
 
                     snapshot.forEach(doc => {
-                        const data = doc.data();
-                        total += data.amount || 0;
-                        categories[data.category] = (categories[data.category] || 0) + (data.amount || 0);
+                        const d = doc.data();
+                        total += d.amount || 0;
+                        categories[d.category] = (categories[d.category] || 0) + (d.amount || 0);
                     });
 
-                    document.getElementById('totalAmount').textContent = `₹${total.toFixed(0)}`;
+                    document.getElementById('totalAmount').textContent = `₹${Math.round(total)}`;
 
-                    // Insight
-                    let insight = '';
-                    if (total > 2000) insight = `⚠️ This is higher than usual.`;
-                    else if (total > 1000) insight = `✓ Normal day.`;
-                    else if (total > 0) insight = `✓ Great! You're spending wisely.`;
-                    else insight = `💪 No spending recorded today.`;
+                    let insight = total > 2000 ? "⚠️ Higher than usual" :
+                                  total > 1000 ? "✓ Normal day" :
+                                  total > 0 ? "✓ Good control!" : "💪 No spending today";
 
                     const insightEl = document.getElementById('insightText');
                     insightEl.textContent = insight;
-                    insightEl.classList.toggle('negative', total > 2000);
-                    insightEl.classList.toggle('positive', total > 0 && total <= 1000);
+                    insightEl.className = 'insight ' + (total > 2000 ? 'negative' : 'positive');
 
-                    // Categories
-                    const catHTML = Object.entries(categories)
-                        .map(([cat, amt]) => `
-                            <div class="category-item">
-                                <span class="category-name">${cat}</span>
-                                <span class="category-amount">₹${amt.toFixed(0)}</span>
-                            </div>
-                        `).join('');
-
-                    document.getElementById('categoriesList').innerHTML = catHTML || '<div class="empty-state">No spending yet</div>';
+                    let html = '';
+                    Object.entries(categories).forEach(([cat, amt]) => {
+                        html += `<div class="category-item"><span>${cat}</span><span>₹${Math.round(amt)}</span></div>`;
+                    });
+                    document.getElementById('categoriesList').innerHTML = html || '<div class="empty-state">No spending today</div>';
                 });
         }
 
-        // Load History
         function loadHistoryData() {
             const user = auth.currentUser;
             if (!user) return;
 
             db.collection('users').doc(user.uid).collection('transactions')
                 .orderBy('timestamp', 'desc')
-                .limit(30)
+                .limit(20)
                 .get()
                 .then(snapshot => {
-                    const html = snapshot.docs.map(doc => {
-                        const data = doc.data();
-                        return `
+                    let html = '';
+                    snapshot.forEach(doc => {
+                        const d = doc.data();
+                        html += `
                             <div class="history-item">
                                 <div>
-                                    <div class="category-name">${data.category}</div>
-                                    <div class="history-date">${data.date}</div>
+                                    <strong>${d.category}</strong><br>
+                                    <small>${d.date}</small>
                                 </div>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <span class="history-amount">₹${data.amount}</span>
-                                    <button class="btn btn-delete" onclick="deleteTransaction('${doc.id}')">Delete</button>
+                                <div style="text-align:right;">
+                                    <strong>₹${d.amount}</strong><br>
+                                    <button onclick="deleteTransaction('${doc.id}')" style="color:red; background:none; border:none; font-size:12px;">Delete</button>
                                 </div>
-                            </div>
-                        `;
-                    }).join('');
-
+                            </div>`;
+                    });
                     document.getElementById('historyList').innerHTML = html || '<div class="empty-state">No transactions yet</div>';
                 });
         }
 
-        function deleteTransaction(docId) {
-            if (!confirm('Delete this transaction?')) return;
-            const user = auth.currentUser;
-            if (!user) return;
-            db.collection('users').doc(user.uid).collection('transactions').doc(docId).delete()
-                .then(() => {
-                    loadTodayData();
-                    loadHistoryData();
-                });
-        }
-
-        // CSV Upload
-        function handleCSVUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const lines = e.target.result.split('\n');
-                const user = auth.currentUser;
-                if (!user) return;
-
-                document.getElementById('uploadLoading').classList.add('show');
-
-                let promises = [];
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
-                    const [date, amountStr, category] = line.split(',').map(s => s.trim());
-                    if (date && amountStr && category) {
-                        const p = db.collection('users').doc(user.uid).collection('transactions').add({
-                            amount: parseFloat(amountStr),
-                            category: category,
-                            date: date,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            status: 'imported_csv'
-                        });
-                        promises.push(p);
-                    }
-                }
-
-                Promise.all(promises).then(() => {
-                    document.getElementById('uploadLoading').classList.remove('show');
-                    alert(`Successfully imported ${promises.length} transactions!`);
-                    loadTodayData();
-                    loadHistoryData();
-                });
-            };
-            reader.readAsText(file);
-        }
-
-        // Check auth state
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                showApp(user);
-            } else {
-                document.getElementById('authSection').style.display = 'block';
-                document.getElementById('appSection').style.display = 'none';
-            }
-        });
-    </script>
-</body>
-</html>
+        function deleteTransaction(id) {
+            if
