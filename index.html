@@ -161,21 +161,7 @@
             grid-template-columns: 1fr;
         }
 
-        select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        input[type="number"] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        input[type="date"] {
+        select, input[type="number"], input[type="date"] {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -190,21 +176,13 @@
             background: #40c057;
         }
 
-        /* Daily Summary */
-        .summary-card {
+        /* Other styles remain the same */
+        .summary-card, .history-card, .csv-section {
             background: white;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .summary-card h2 {
-            color: #667eea;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
         }
 
         .total-amount {
@@ -235,11 +213,6 @@
             background: #ffe8e8;
         }
 
-        /* Categories Breakdown */
-        .categories-list {
-            margin-top: 20px;
-        }
-
         .category-item {
             display: flex;
             justify-content: space-between;
@@ -249,33 +222,6 @@
             font-size: 14px;
         }
 
-        .category-item:last-child {
-            border-bottom: none;
-        }
-
-        .category-name {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .category-amount {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        /* History */
-        .history-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .history-card h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
         .history-item {
             display: flex;
             justify-content: space-between;
@@ -283,33 +229,6 @@
             padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
             font-size: 14px;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-left {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .history-date {
-            color: #999;
-            font-size: 12px;
-        }
-
-        .history-amount {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        .btn-delete {
-            background: #ff6b6b;
-            padding: 4px 8px;
-            font-size: 12px;
-            width: auto;
         }
 
         .empty-state {
@@ -342,29 +261,6 @@
             color: white;
         }
 
-        .csv-section {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .csv-section h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .csv-section p {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 10px;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
         .loading {
             display: none;
             text-align: center;
@@ -377,17 +273,9 @@
         }
 
         @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            .total-amount {
-                font-size: 32px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            body { padding: 10px; }
+            .total-amount { font-size: 32px; }
+            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -422,14 +310,13 @@
 
         <!-- Tabs -->
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('today')">Today</button>
-            <button class="tab" onclick="switchTab('history')">History</button>
-            <button class="tab" onclick="switchTab('upload')">Import CSV</button>
+            <button class="tab active" onclick="switchTab(this, 'today')">Today</button>
+            <button class="tab" onclick="switchTab(this, 'history')">History</button>
+            <button class="tab" onclick="switchTab(this, 'upload')">Import CSV</button>
         </div>
 
         <!-- TODAY TAB -->
         <div id="todayTab">
-            <!-- Daily Summary -->
             <div class="summary-card" id="summaryCard">
                 <h2>Today You Spent</h2>
                 <div class="total-amount" id="totalAmount">₹0</div>
@@ -437,7 +324,6 @@
                 <div class="categories-list" id="categoriesList"></div>
             </div>
 
-            <!-- Entry Form -->
             <div class="entry-card">
                 <h3>Add Spending</h3>
                 <div class="form-row full">
@@ -454,7 +340,7 @@
                 </div>
                 <div class="form-row">
                     <input type="number" id="amount" placeholder="Amount" min="0">
-                    <input type="date" id="date" value="">
+                    <input type="date" id="date">
                 </div>
                 <button class="btn btn-primary" onclick="addSpending()">Add Spending</button>
             </div>
@@ -486,14 +372,14 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
 
     <script>
-        // FIREBASE CONFIG - YOUR CONFIG IS HERE
+        // ==================== FIXED FIREBASE CONFIG ====================
         const firebaseConfig = {
             apiKey: "AIzaSyB8MGJRfWSj7p50NPBEbuRyISJN99n3gs",
             authDomain: "trackspent-d2d17.firebaseapp.com",
             projectId: "trackspent-d2d17",
             storageBucket: "trackspent-d2d17.firebasestorage.app",
             messagingSenderId: "7421351313",
-            appId: "1:7421351314:web:c44737431f175a030f1a3f"
+            appId: "1:7421351313:web:c44737431f175a030f1a3f"
         };
 
         // Initialize Firebase
@@ -501,12 +387,12 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Set today's date by default
+        // Set today's date
         document.getElementById('date').valueAsDate = new Date();
 
-        // Auth Functions
+        // ==================== AUTH FUNCTIONS ====================
         function handleSignUp() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
             if (!email || !password) {
@@ -516,16 +402,17 @@
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then(result => {
-                    console.log('User created:', result.user);
+                    alert('Account created successfully!');
                     showApp(result.user);
                 })
                 .catch(error => {
+                    console.error(error);
                     alert('Sign up error: ' + error.message);
                 });
         }
 
         function handleLogIn() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
             if (!email || !password) {
@@ -535,10 +422,10 @@
 
             auth.signInWithEmailAndPassword(email, password)
                 .then(result => {
-                    console.log('User logged in:', result.user);
                     showApp(result.user);
                 })
                 .catch(error => {
+                    console.error(error);
                     alert('Log in error: ' + error.message);
                 });
         }
@@ -547,18 +434,26 @@
             auth.signOut().then(() => {
                 document.getElementById('authSection').style.display = 'block';
                 document.getElementById('appSection').style.display = 'none';
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
             });
         }
 
-        // Show App
+        // ==================== MAIN APP ====================
         function showApp(user) {
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('appSection').style.display = 'block';
             document.getElementById('userEmail').textContent = user.email;
             loadTodayData();
             loadHistoryData();
+        }
+
+        // Tab Switching (Fixed)
+        function switchTab(btn, tab) {
+            document.getElementById('todayTab').style.display = tab === 'today' ? 'block' : 'none';
+            document.getElementById('historyTab').style.display = tab === 'history' ? 'block' : 'none';
+            document.getElementById('uploadTab').style.display = tab === 'upload' ? 'block' : 'none';
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
         }
 
         // Add Spending
@@ -573,30 +468,24 @@
             }
 
             const user = auth.currentUser;
-            if (!user) {
-                alert('You must be logged in');
-                return;
-            }
+            if (!user) return alert('You must be logged in');
 
             db.collection('users').doc(user.uid).collection('transactions').add({
                 amount: amount,
                 category: category,
                 date: date,
-                timestamp: new Date(),
-                status: 'added_manually'
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 document.getElementById('amount').value = '';
-                document.getElementById('category').value = 'Food & Drinks';
-                document.getElementById('date').valueAsDate = new Date();
                 loadTodayData();
                 loadHistoryData();
-                alert('Spending added!');
+                alert('Spending added successfully!');
             }).catch(error => {
                 alert('Error adding spending: ' + error.message);
             });
         }
 
-        // Load Today's Data
+        // Load Today Data
         function loadTodayData() {
             const user = auth.currentUser;
             if (!user) return;
@@ -612,59 +501,34 @@
 
                     snapshot.forEach(doc => {
                         const data = doc.data();
-                        total += data.amount;
-                        categories[data.category] = (categories[data.category] || 0) + data.amount;
+                        total += data.amount || 0;
+                        categories[data.category] = (categories[data.category] || 0) + (data.amount || 0);
                     });
 
-                    // Update UI
                     document.getElementById('totalAmount').textContent = `₹${total.toFixed(0)}`;
 
-                    // Generate insight
+                    // Insight
                     let insight = '';
-                    if (total > 2000) {
-                        insight = `⚠️ This is higher than usual. Consider if all these expenses were necessary.`;
-                    } else if (total > 1000) {
-                        insight = `✓ This is about your normal day.`;
-                    } else if (total > 0) {
-                        insight = `✓ Great! You're spending less than usual.`;
-                    } else {
-                        insight = `💪 No spending recorded yet today.`;
-                    }
+                    if (total > 2000) insight = `⚠️ This is higher than usual.`;
+                    else if (total > 1000) insight = `✓ Normal day.`;
+                    else if (total > 0) insight = `✓ Great! You're spending wisely.`;
+                    else insight = `💪 No spending recorded today.`;
 
-                    const insightElement = document.getElementById('insightText');
-                    insightElement.textContent = insight;
-                    if (total > 2000) {
-                        insightElement.classList.add('negative');
-                        insightElement.classList.remove('positive');
-                    } else if (total < 1000) {
-                        insightElement.classList.add('positive');
-                        insightElement.classList.remove('negative');
-                    } else {
-                        insightElement.classList.remove('negative', 'positive');
-                    }
+                    const insightEl = document.getElementById('insightText');
+                    insightEl.textContent = insight;
+                    insightEl.classList.toggle('negative', total > 2000);
+                    insightEl.classList.toggle('positive', total > 0 && total <= 1000);
 
-                    // Show categories
-                    const categoriesHTML = Object.entries(categories)
-                        .map(([cat, amount]) => `
+                    // Categories
+                    const catHTML = Object.entries(categories)
+                        .map(([cat, amt]) => `
                             <div class="category-item">
                                 <span class="category-name">${cat}</span>
-                                <span class="category-amount">₹${amount.toFixed(0)}</span>
+                                <span class="category-amount">₹${amt.toFixed(0)}</span>
                             </div>
-                        `)
-                        .join('');
+                        `).join('');
 
-                    document.getElementById('categoriesList').innerHTML = categoriesHTML || '<div class="empty-state">No spending yet</div>';
-
-                    // Log to analytics
-                    logAnalytics({
-                        userId: user.uid,
-                        userEmail: user.email,
-                        date: today,
-                        totalSpend: total,
-                        transactionCount: snapshot.size,
-                        categories: categories,
-                        timestamp: new Date()
-                    });
+                    document.getElementById('categoriesList').innerHTML = catHTML || '<div class="empty-state">No spending yet</div>';
                 });
         }
 
@@ -674,105 +538,82 @@
             if (!user) return;
 
             db.collection('users').doc(user.uid).collection('transactions')
-                .orderBy('date', 'desc')
+                .orderBy('timestamp', 'desc')
                 .limit(30)
                 .get()
                 .then(snapshot => {
-                    const historyHTML = snapshot.docs.map(doc => {
+                    const html = snapshot.docs.map(doc => {
                         const data = doc.data();
-                        const docId = doc.id;
                         return `
                             <div class="history-item">
-                                <div class="history-left">
-                                    <div>
-                                        <div class="category-name">${data.category}</div>
-                                        <div class="history-date">${data.date}</div>
-                                    </div>
+                                <div>
+                                    <div class="category-name">${data.category}</div>
+                                    <div class="history-date">${data.date}</div>
                                 </div>
                                 <div style="display: flex; gap: 10px; align-items: center;">
                                     <span class="history-amount">₹${data.amount}</span>
-                                    <button class="btn btn-delete" onclick="deleteTransaction('${docId}')">Delete</button>
+                                    <button class="btn btn-delete" onclick="deleteTransaction('${doc.id}')">Delete</button>
                                 </div>
                             </div>
                         `;
                     }).join('');
 
-                    document.getElementById('historyList').innerHTML = historyHTML || '<div class="empty-state">No transactions</div>';
+                    document.getElementById('historyList').innerHTML = html || '<div class="empty-state">No transactions yet</div>';
                 });
         }
 
-        // Delete Transaction
         function deleteTransaction(docId) {
             if (!confirm('Delete this transaction?')) return;
-
             const user = auth.currentUser;
+            if (!user) return;
             db.collection('users').doc(user.uid).collection('transactions').doc(docId).delete()
                 .then(() => {
                     loadTodayData();
                     loadHistoryData();
-                })
-                .catch(error => alert('Error: ' + error.message));
+                });
         }
 
         // CSV Upload
         function handleCSVUpload(event) {
             const file = event.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
-
             reader.onload = function(e) {
-                const csv = e.target.result;
-                const lines = csv.split('\n');
-
+                const lines = e.target.result.split('\n');
                 const user = auth.currentUser;
                 if (!user) return;
 
                 document.getElementById('uploadLoading').classList.add('show');
 
-                let count = 0;
-                lines.forEach((line, index) => {
-                    if (index === 0 || !line.trim()) return;
-
-                    const [date, amount, category] = line.split(',').map(s => s.trim());
-
-                    if (date && amount && category) {
-                        db.collection('users').doc(user.uid).collection('transactions').add({
-                            amount: parseFloat(amount),
+                let promises = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    const [date, amountStr, category] = line.split(',').map(s => s.trim());
+                    if (date && amountStr && category) {
+                        const p = db.collection('users').doc(user.uid).collection('transactions').add({
+                            amount: parseFloat(amountStr),
                             category: category,
                             date: date,
-                            timestamp: new Date(),
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             status: 'imported_csv'
-                        }).then(() => {
-                            count++;
-                            if (count === lines.length - 1) {
-                                document.getElementById('uploadLoading').classList.remove('show');
-                                alert(`Imported ${count} transactions!`);
-                                loadTodayData();
-                                loadHistoryData();
-                            }
                         });
+                        promises.push(p);
                     }
+                }
+
+                Promise.all(promises).then(() => {
+                    document.getElementById('uploadLoading').classList.remove('show');
+                    alert(`Successfully imported ${promises.length} transactions!`);
+                    loadTodayData();
+                    loadHistoryData();
                 });
             };
-
             reader.readAsText(file);
         }
 
-        // Tab Switching
-        function switchTab(tab) {
-            document.getElementById('todayTab').style.display = tab === 'today' ? 'block' : 'none';
-            document.getElementById('historyTab').style.display = tab === 'history' ? 'block' : 'none';
-            document.getElementById('uploadTab').style.display = tab === 'upload' ? 'block' : 'none';
-
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
-        // Analytics Logging
-        function logAnalytics(data) {
-            console.log('Analytics:', data);
-        }
-
-        // Check if user is already logged in
+        // Check auth state
         auth.onAuthStateChanged(user => {
             if (user) {
                 showApp(user);
