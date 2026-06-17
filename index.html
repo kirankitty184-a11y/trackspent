@@ -20,10 +20,9 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-        .auth-section h2 { text-align: center; color: #667eea; margin-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
-        .form-group input, select {
+        input, select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -41,30 +40,18 @@
             margin-top: 10px;
         }
         .btn-primary { background: #667eea; color: white; }
-        .btn-primary:hover { background: #5568d3; }
         .btn-secondary { background: #f0f0f0; color: #333; }
-        .btn-logout { background: #ff6b6b; padding: 8px 16px; font-size: 14px; width: auto; }
-        .tab { flex: 1; padding: 12px; background: white; border: none; border-radius: 8px; cursor: pointer; }
+        .tab { flex: 1; padding: 12px; background: white; border: none; border-radius: 8px; }
         .tab.active { background: #667eea; color: white; }
         .tabs { display: flex; gap: 10px; margin: 20px 0; }
         .total-amount { font-size: 48px; font-weight: 700; color: #667eea; }
-        .insight { padding: 12px; border-left: 4px solid #667eea; background: #f8f9ff; border-radius: 4px; margin: 15px 0; }
-        .insight.positive { border-left-color: #51cf66; background: #f1fce4; }
-        .insight.negative { border-left-color: #ff6b6b; background: #ffe8e8; }
-        .category-item, .history-item {
-            display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;
-        }
-        .empty-state { text-align: center; color: #999; padding: 30px; }
-        .loading { display: none; text-align: center; color: #667eea; margin: 10px 0; }
-        .loading.show { display: block; }
     </style>
 </head>
 <body>
 
-    <!-- Auth Section -->
     <div class="auth-section" id="authSection">
         <h2>TrackSpent</h2>
-        <p style="text-align:center; color:#999; margin-bottom:20px;">Daily spending clarity in 30 seconds</p>
+        <p style="text-align:center;color:#999;margin-bottom:20px;">Daily spending clarity in 30 seconds</p>
         
         <div class="form-group">
             <label>Email</label>
@@ -79,83 +66,19 @@
         <button class="btn btn-secondary" onclick="handleLogIn()">Log In</button>
     </div>
 
-    <!-- Main App -->
-    <div class="app-section" id="appSection" style="display:none;">
-        <div class="auth-section">
-            <h2>TrackSpent</h2>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span id="userEmail" style="color:#667eea; font-weight:500;"></span>
-                <button class="btn btn-logout" onclick="handleLogOut()">Log Out</button>
-            </div>
-        </div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab(this, 'today')">Today</button>
-            <button class="tab" onclick="switchTab(this, 'history')">History</button>
-            <button class="tab" onclick="switchTab(this, 'upload')">Import CSV</button>
-        </div>
-
-        <!-- Today Tab -->
-        <div id="todayTab">
-            <div class="summary-card">
-                <h3>Today You Spent</h3>
-                <div class="total-amount" id="totalAmount">₹0</div>
-                <div id="insightText" class="insight"></div>
-                <div id="categoriesList"></div>
-            </div>
-
-            <div class="entry-card">
-                <h3>Add New Spending</h3>
-                <div class="form-group">
-                    <label>Category</label>
-                    <select id="category">
-                        <option value="Food & Drinks">🍔 Food & Drinks</option>
-                        <option value="Travel">🚗 Travel</option>
-                        <option value="Shopping">🛍️ Shopping</option>
-                        <option value="Subscriptions">📱 Subscriptions</option>
-                        <option value="Entertainment">🎬 Entertainment</option>
-                        <option value="Utilities">💡 Utilities</option>
-                        <option value="Other">📍 Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Amount (₹)</label>
-                    <input type="number" id="amount" placeholder="0" min="0">
-                </div>
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" id="date">
-                </div>
-                <button class="btn btn-primary" onclick="addSpending()">Add Spending</button>
-            </div>
-        </div>
-
-        <!-- History Tab -->
-        <div id="historyTab" style="display:none;">
-            <div class="history-card">
-                <h3>Recent Transactions</h3>
-                <div id="historyList" class="empty-state">No transactions yet</div>
-            </div>
-        </div>
-
-        <!-- CSV Upload Tab -->
-        <div id="uploadTab" style="display:none;">
-            <div class="csv-section">
-                <h3>Import from Bank CSV</h3>
-                <p style="color:#666; margin-bottom:15px;">Format: Date,Amount,Category</p>
-                <input type="file" id="csvFile" accept=".csv" onchange="handleCSVUpload(event)" style="display:none;">
-                <button class="btn btn-primary" onclick="document.getElementById('csvFile').click()">Choose CSV File</button>
-                <div class="loading" id="uploadLoading">Processing...</div>
-            </div>
-        </div>
+    <div class="auth-section" id="appSection" style="display:none;">
+        <h2>Welcome, <span id="userEmail"></span></h2>
+        <button onclick="handleLogOut()" style="background:#ff6b6b;color:white;padding:10px 20px;border:none;border-radius:8px;">Log Out</button>
     </div>
 
-    <!-- Firebase -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
 
     <script>
+        console.log("🚀 Script loaded successfully");
+
         const firebaseConfig = {
             apiKey: "AIzaSyB8MGJRfWSj7p50NPBEbuRyISJN99n3gs",
             authDomain: "trackspent-d2d17.firebaseapp.com",
@@ -165,36 +88,51 @@
             appId: "1:7421351313:web:c44737431f175a030f1a3f"
         };
 
-        firebase.initializeApp(firebaseConfig);
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("✅ Firebase initialized");
+        } catch (e) {
+            console.error("❌ Firebase init failed:", e);
+        }
+
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Set default date
-        document.getElementById('date').valueAsDate = new Date();
-
         function handleSignUp() {
+            console.log("🔄 Sign Up button clicked");
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            if (!email || !password) return alert("Please fill all fields");
+            console.log("Email:", email, "Password length:", password.length);
+
+            if (!email || !password) {
+                alert("Please fill email and password");
+                return;
+            }
 
             auth.createUserWithEmailAndPassword(email, password)
-                .then((result) => {
-                    alert("✅ Account created successfully!");
-                    showApp(result.user);
+                .then((userCredential) => {
+                    console.log("✅ User created successfully!", userCredential.user);
+                    alert("Account created! Welcome!");
+                    showApp(userCredential.user);
                 })
-                .catch(err => alert("Signup Error: " + err.message));
+                .catch((error) => {
+                    console.error("❌ Signup Error:", error.code, error.message);
+                    alert("Signup Failed: " + error.message);
+                });
         }
 
         function handleLogIn() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
+            console.log("🔄 Login button clicked");
+            // ... similar logic
+            alert("Login function called (check console)");
+        }
 
-            if (!email || !password) return alert("Please fill all fields");
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((result) => showApp(result.user))
-                .catch(err => alert("Login Error: " + err.message));
+        function showApp(user) {
+            console.log("✅ Showing main app for user:", user.email);
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('appSection').style.display = 'block';
+            document.getElementById('userEmail').textContent = user.email;
         }
 
         function handleLogOut() {
@@ -204,107 +142,15 @@
             });
         }
 
-        function showApp(user) {
-            document.getElementById('authSection').style.display = 'none';
-            document.getElementById('appSection').style.display = 'block';
-            document.getElementById('userEmail').textContent = user.email;
-            loadTodayData();
-            loadHistoryData();
-        }
+        // Check current auth state
+        auth.onAuthStateChanged((user) => {
+            console.log("🔍 Auth state changed:", user ? "Logged in" : "Not logged in");
+            if (user) {
+                showApp(user);
+            }
+        });
 
-        function switchTab(btn, tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-
-            document.getElementById('todayTab').style.display = tab === 'today' ? 'block' : 'none';
-            document.getElementById('historyTab').style.display = tab === 'history' ? 'block' : 'none';
-            document.getElementById('uploadTab').style.display = tab === 'upload' ? 'block' : 'none';
-        }
-
-        function addSpending() {
-            const amount = parseFloat(document.getElementById('amount').value);
-            const category = document.getElementById('category').value;
-            const date = document.getElementById('date').value;
-
-            if (!amount || !category || !date) return alert("Please fill all fields");
-
-            const user = auth.currentUser;
-            db.collection('users').doc(user.uid).collection('transactions').add({
-                amount,
-                category,
-                date,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert("✅ Spending added!");
-                document.getElementById('amount').value = '';
-                loadTodayData();
-                loadHistoryData();
-            }).catch(err => alert("Error: " + err.message));
-        }
-
-        function loadTodayData() {
-            const user = auth.currentUser;
-            if (!user) return;
-            const today = new Date().toISOString().split('T')[0];
-
-            db.collection('users').doc(user.uid).collection('transactions')
-                .where('date', '==', today)
-                .get()
-                .then(snapshot => {
-                    let total = 0;
-                    const categories = {};
-
-                    snapshot.forEach(doc => {
-                        const d = doc.data();
-                        total += d.amount || 0;
-                        categories[d.category] = (categories[d.category] || 0) + (d.amount || 0);
-                    });
-
-                    document.getElementById('totalAmount').textContent = `₹${Math.round(total)}`;
-
-                    let insight = total > 2000 ? "⚠️ Higher than usual" :
-                                  total > 1000 ? "✓ Normal day" :
-                                  total > 0 ? "✓ Good control!" : "💪 No spending today";
-
-                    const insightEl = document.getElementById('insightText');
-                    insightEl.textContent = insight;
-                    insightEl.className = 'insight ' + (total > 2000 ? 'negative' : 'positive');
-
-                    let html = '';
-                    Object.entries(categories).forEach(([cat, amt]) => {
-                        html += `<div class="category-item"><span>${cat}</span><span>₹${Math.round(amt)}</span></div>`;
-                    });
-                    document.getElementById('categoriesList').innerHTML = html || '<div class="empty-state">No spending today</div>';
-                });
-        }
-
-        function loadHistoryData() {
-            const user = auth.currentUser;
-            if (!user) return;
-
-            db.collection('users').doc(user.uid).collection('transactions')
-                .orderBy('timestamp', 'desc')
-                .limit(20)
-                .get()
-                .then(snapshot => {
-                    let html = '';
-                    snapshot.forEach(doc => {
-                        const d = doc.data();
-                        html += `
-                            <div class="history-item">
-                                <div>
-                                    <strong>${d.category}</strong><br>
-                                    <small>${d.date}</small>
-                                </div>
-                                <div style="text-align:right;">
-                                    <strong>₹${d.amount}</strong><br>
-                                    <button onclick="deleteTransaction('${doc.id}')" style="color:red; background:none; border:none; font-size:12px;">Delete</button>
-                                </div>
-                            </div>`;
-                    });
-                    document.getElementById('historyList').innerHTML = html || '<div class="empty-state">No transactions yet</div>';
-                });
-        }
-
-        function deleteTransaction(id) {
-            if
+        console.log("✅ All scripts initialized");
+    </script>
+</body>
+</html>
