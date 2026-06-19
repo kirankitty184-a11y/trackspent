@@ -3,95 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrackSpent - Expense Tracker</title>
+    <title>TrackSpent</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', system-ui, sans-serif; }
-        .card { transition: all 0.3s ease; }
-        .card:hover { transform: translateY(-3px); }
+        body { font-family: system-ui, sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gradient-to-br from-indigo-600 to-blue-600 min-h-screen flex items-center justify-center">
 
-    <!-- Auth -->
-    <div id="authSection" class="max-w-md mx-auto mt-12 bg-white rounded-3xl shadow-xl p-8">
-        <h2 class="text-3xl font-bold text-center text-indigo-700">TrackSpent</h2>
-        <p class="text-center text-gray-500 mt-2 mb-8">Know where your money goes</p>
-        <input type="email" id="email" class="w-full px-4 py-3 border rounded-2xl mb-4" placeholder="Email">
-        <div class="relative">
-            <input type="password" id="password" class="w-full px-4 py-3 border rounded-2xl" placeholder="Password">
-            <span id="togglePassword" class="absolute right-4 top-4 text-gray-400 cursor-pointer text-xl">👁️</span>
+    <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4">
+        <h2 class="text-3xl font-bold text-center text-indigo-700 mb-2">TrackSpent</h2>
+        <p class="text-center text-gray-500 mb-8">Know where your money goes</p>
+
+        <input type="email" id="email" placeholder="Email" class="w-full px-4 py-3 border border-gray-300 rounded-2xl mb-4 focus:outline-none focus:border-indigo-500">
+        
+        <div class="relative mb-6">
+            <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-indigo-500">
+            <span id="togglePassword" class="absolute right-4 top-4 cursor-pointer text-xl text-gray-400">👁️</span>
         </div>
-        <button onclick="handleSignUp()" class="w-full mt-6 bg-indigo-600 text-white py-4 rounded-2xl font-semibold">Sign Up</button>
-        <button onclick="handleLogIn()" class="w-full mt-3 bg-gray-100 text-gray-700 py-4 rounded-2xl font-semibold">Log In</button>
-    </div>
 
-    <!-- Dashboard -->
-    <div id="appSection" class="hidden">
-        <header class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-indigo-700">TrackSpent</h1>
-            <div class="flex items-center gap-4">
-                <span id="userEmail" class="text-sm"></span>
-                <button onclick="handleLogOut()" class="px-5 py-2 text-red-600 hover:bg-red-50 rounded-2xl">Logout</button>
-            </div>
-        </header>
-
-        <div class="max-w-7xl mx-auto p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Left Summary -->
-                <div class="lg:col-span-3 bg-white rounded-3xl p-6 shadow">
-                    <h3 class="font-semibold text-lg mb-4">This Month</h3>
-                    <p id="monthlyTotal" class="text-5xl font-bold text-indigo-600">₹0</p>
-                    
-                    <div class="mt-8">
-                        <h4 class="font-medium mb-3">Weekly vs Monthly</h4>
-                        <div id="comparison" class="space-y-3"></div>
-                    </div>
-                </div>
-
-                <!-- Main Area -->
-                <div class="lg:col-span-6 space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-semibold">June 2025</h2>
-                        <button onclick="showAddModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-indigo-700">
-                            <i class="fas fa-plus"></i> Add Expense
-                        </button>
-                    </div>
-
-                    <div id="categoriesContainer" class="space-y-4"></div>
-                </div>
-
-                <!-- Right Sidebar -->
-                <div class="lg:col-span-3 bg-white rounded-3xl p-6 shadow">
-                    <h3 class="font-semibold mb-4">Recent Activity</h3>
-                    <div id="recentList" class="space-y-4"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Expense Modal -->
-    <div id="addModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded-3xl p-8 w-full max-w-md mx-4">
-            <h3 class="text-xl font-semibold mb-6">Add New Expense</h3>
-            <input id="modalDate" type="date" class="w-full mb-4 p-3 border rounded-2xl">
-            <input id="modalDesc" type="text" placeholder="What did you spend on?" class="w-full mb-4 p-3 border rounded-2xl">
-            <input id="modalAmount" type="number" placeholder="Amount (₹)" class="w-full mb-4 p-3 border rounded-2xl">
-            <select id="modalCategory" class="w-full mb-6 p-3 border rounded-2xl">
-                <option>Food & Dining</option>
-                <option>Groceries</option>
-                <option>E-commerce</option>
-                <option>Petrol / Fuel</option>
-                <option>Ride & Logistics</option>
-                <option>Clothes & Fashion</option>
-                <option>Miscellaneous</option>
-            </select>
-            <div class="flex gap-4">
-                <button onclick="addNewExpense()" class="flex-1 bg-green-600 text-white py-4 rounded-2xl">Add Expense</button>
-                <button onclick="hideModal()" class="flex-1 bg-gray-200 py-4 rounded-2xl">Cancel</button>
-            </div>
-        </div>
+        <button onclick="handleSignUp()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl mb-3">Sign Up</button>
+        <button onclick="handleLogIn()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-4 rounded-2xl">Log In</button>
     </div>
 
     <!-- Firebase -->
@@ -111,126 +43,57 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        let expenses = [];
-
-        // Password Toggle
-        document.getElementById('togglePassword').addEventListener('click', () => {
+        // Password toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
             const pwd = document.getElementById('password');
-            pwd.type = pwd.type === "password" ? "text" : "password";
-            this.textContent = pwd.type === "password" ? "👁️" : "🙈";
+            if (pwd.type === "password") {
+                pwd.type = "text";
+                this.textContent = "🙈";
+            } else {
+                pwd.type = "password";
+                this.textContent = "👁️";
+            }
         });
 
-        function handleSignUp() { /* ... */ }
-        function handleLogIn() { /* ... */ }
-        function handleLogOut() { location.reload(); }
+        function handleSignUp() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-        function showApp(user) {
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('appSection').classList.remove('hidden');
-            document.getElementById('userEmail').textContent = user.email;
-            loadExpenses();
+            if (!email || password.length < 6) {
+                alert("Please enter valid email and password (min 6 characters)");
+                return;
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(() => {
+                    alert("✅ Account created successfully!");
+                    window.location.reload();
+                })
+                .catch(err => alert("Error: " + err.message));
         }
 
-        function loadExpenses() {
-            expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-            renderAll();
+        function handleLogIn() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                alert("Please fill email and password");
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    alert("✅ Login successful! Welcome to TrackSpent.");
+                    window.location.reload();
+                })
+                .catch(err => alert("Error: " + err.message));
         }
 
-        function saveExpenses() {
-            localStorage.setItem('expenses', JSON.stringify(expenses));
-            renderAll();
-        }
-
-        function renderAll() {
-            renderMonthlyTotal();
-            renderCategories();
-            renderRecent();
-            renderComparison();
-        }
-
-        function renderMonthlyTotal() {
-            const total = expenses.reduce((sum, e) => sum + e.amount, 0);
-            document.getElementById('monthlyTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
-        }
-
-        function renderCategories() {
-            // Group by category (simplified)
-            const container = document.getElementById('categoriesContainer');
-            container.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    ${['Food & Dining','Groceries','E-commerce','Petrol / Fuel','Ride & Logistics'].map(cat => {
-                        const catExpenses = expenses.filter(e => e.category === cat);
-                        const total = catExpenses.reduce((sum, e) => sum + e.amount, 0);
-                        return `
-                            <div class="bg-white p-6 rounded-3xl card">
-                                <div class="flex justify-between">
-                                    <h4 class="font-semibold">${cat}</h4>
-                                    <span class="font-bold text-indigo-600">₹${total}</span>
-                                </div>
-                                <p class="text-sm text-gray-500 mt-1">${catExpenses.length} transactions</p>
-                            </div>`;
-                    }).join('')}
-                </div>`;
-        }
-
-        function renderRecent() {
-            const container = document.getElementById('recentList');
-            container.innerHTML = expenses.slice(0, 6).map(exp => `
-                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
-                    <div>
-                        <p class="font-medium">${exp.desc}</p>
-                        <p class="text-xs text-gray-500">${exp.date} • ${exp.category}</p>
-                    </div>
-                    <p class="font-semibold text-red-600">-₹${exp.amount}</p>
-                </div>
-            `).join('') || '<p class="text-gray-400 text-center py-8">No expenses yet</p>';
-        }
-
-        function renderComparison() {
-            document.getElementById('comparison').innerHTML = `
-                <div class="flex justify-between bg-gray-50 p-4 rounded-2xl">
-                    <span>This Week</span>
-                    <span class="font-semibold">₹4,820</span>
-                </div>
-                <div class="flex justify-between bg-gray-50 p-4 rounded-2xl">
-                    <span>This Month</span>
-                    <span class="font-semibold text-indigo-600">₹28,450</span>
-                </div>`;
-        }
-
-        function showAddModal() {
-            document.getElementById('addModal').classList.remove('hidden');
-            document.getElementById('modalDate').valueAsDate = new Date();
-        }
-
-        function hideModal() {
-            document.getElementById('addModal').classList.add('hidden');
-        }
-
-        function addNewExpense() {
-            const desc = document.getElementById('modalDesc').value;
-            const amount = parseFloat(document.getElementById('modalAmount').value);
-            const category = document.getElementById('modalCategory').value;
-            const date = document.getElementById('modalDate').value;
-
-            if (!desc || !amount) return alert("Please fill description and amount");
-
-            expenses.unshift({
-                id: Date.now(),
-                date: date,
-                desc: desc,
-                amount: amount,
-                category: category
-            });
-
-            saveExpenses();
-            hideModal();
-            alert("✅ Expense added successfully!");
-        }
-
-        // Auth handlers (same as before)
+        // Check if already logged in
         auth.onAuthStateChanged(user => {
-            if (user) showApp(user);
+            if (user) {
+                alert("✅ You are logged in as " + user.email + "\n\nThe full dashboard is coming in next update.");
+            }
         });
     </script>
 </body>
