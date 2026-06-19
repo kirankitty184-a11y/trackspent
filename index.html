@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrackSpent - Expense Tracker</title>
+    <title>TrackSpent</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -13,17 +13,15 @@
 </head>
 <body class="bg-gray-50">
 
-    <!-- Auth Screen -->
+    <!-- Auth -->
     <div id="authSection" class="max-w-md mx-auto mt-12 bg-white rounded-3xl shadow-2xl p-8">
         <h2 class="text-3xl font-bold text-center text-indigo-700">TrackSpent</h2>
         <p class="text-center text-gray-500 mt-2 mb-8">"See It. Limit It. Own It."</p>
-        
         <input type="email" id="email" placeholder="Email" class="w-full px-4 py-3 border rounded-2xl mb-4">
         <div class="relative">
             <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border rounded-2xl">
             <span id="togglePassword" class="absolute right-4 top-4 cursor-pointer text-2xl">👁️</span>
         </div>
-        
         <button onclick="handleSignUp()" class="w-full mt-6 bg-indigo-600 text-white py-4 rounded-2xl font-semibold">Sign Up</button>
         <button onclick="handleLogIn()" class="w-full mt-3 bg-gray-100 text-gray-700 py-4 rounded-2xl font-semibold">Log In</button>
     </div>
@@ -130,7 +128,6 @@
             selectedType = btn.dataset.type;
         }
 
-        // Password Toggle
         document.getElementById('togglePassword').addEventListener('click', function() {
             const pwd = document.getElementById('password');
             pwd.type = pwd.type === "password" ? "text" : "password";
@@ -168,7 +165,18 @@
             document.getElementById('authSection').classList.add('hidden');
             document.getElementById('appSection').classList.remove('hidden');
             document.getElementById('userEmail').textContent = user.email;
-            loadExpenses();
+            
+            // Load sample data for first time users
+            if (!localStorage.getItem('trackspent_expenses')) {
+                expenses = [
+                    {id:1, date:"2025-06-18", desc:"Swiggy Dinner", amount:450, category:"Food & Dining"},
+                    {id:2, date:"2025-06-17", desc:"Petrol", amount:1200, category:"Petrol / Fuel"},
+                    {id:3, date:"2025-06-16", desc:"Amazon Earphones", amount:899, category:"E-commerce"}
+                ];
+                saveExpenses();
+            } else {
+                loadExpenses();
+            }
         }
 
         function loadExpenses() {
