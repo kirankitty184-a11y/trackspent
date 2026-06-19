@@ -8,44 +8,42 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', system-ui, sans-serif; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .card-hover:hover { transform: translateY(-4px); }
     </style>
 </head>
 <body class="bg-gray-50">
 
-    <!-- Auth Section -->
+    <!-- Auth -->
     <div id="authSection" class="max-w-md mx-auto mt-12 bg-white rounded-3xl shadow-2xl p-8">
         <h2 class="text-3xl font-bold text-center text-indigo-700">TrackSpent</h2>
         <p class="text-center text-gray-500 mt-2 mb-8">Know where your money goes</p>
-        
         <input type="email" id="email" placeholder="Email" class="w-full px-4 py-3 border rounded-2xl mb-4">
         <div class="relative">
             <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border rounded-2xl">
             <span id="togglePassword" class="absolute right-4 top-4 cursor-pointer text-2xl">👁️</span>
         </div>
-        
         <button onclick="handleSignUp()" class="w-full mt-6 bg-indigo-600 text-white py-4 rounded-2xl font-semibold">Sign Up</button>
         <button onclick="handleLogIn()" class="w-full mt-3 bg-gray-100 text-gray-700 py-4 rounded-2xl font-semibold">Log In</button>
     </div>
 
-    <!-- Full Dashboard -->
+    <!-- Dashboard -->
     <div id="appSection" class="hidden min-h-screen">
         <header class="bg-white border-b px-8 py-5 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-indigo-700">TrackSpent</h1>
             <div class="flex items-center gap-4">
-                <span id="userEmail" class="text-sm font-medium text-gray-600"></span>
+                <span id="userEmail" class="text-sm font-medium"></span>
                 <button onclick="handleLogOut()" class="px-6 py-2 bg-red-100 text-red-600 rounded-2xl text-sm font-medium">Logout</button>
             </div>
         </header>
 
         <div class="max-w-7xl mx-auto p-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Sidebar -->
+                <!-- Left Sidebar -->
                 <div class="lg:col-span-3 bg-white rounded-3xl p-6 shadow">
                     <h3 class="font-semibold mb-2">Total This Month</h3>
-                    <p id="monthlyTotal" class="text-5xl font-bold text-indigo-600 mb-8">₹0</p>
+                    <p id="monthlyTotal" class="text-5xl font-bold text-indigo-600">₹0</p>
                     
-                    <h4 class="font-medium mb-4 text-gray-700">Category Breakdown</h4>
+                    <h4 class="font-medium mt-8 mb-4">Category Breakdown</h4>
                     <div id="sidebarCategories" class="space-y-4"></div>
                 </div>
 
@@ -57,7 +55,6 @@
                             <i class="fas fa-plus"></i> Add New Expense
                         </button>
                     </div>
-
                     <div id="mainCategories" class="space-y-4"></div>
                 </div>
 
@@ -74,9 +71,20 @@
     <div id="addModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md">
             <h3 class="text-2xl font-semibold mb-6">Add New Expense</h3>
+            
             <input id="modalDate" type="date" class="w-full p-3 border rounded-2xl mb-4">
             <input id="modalDesc" type="text" placeholder="Description / Item" class="w-full p-3 border rounded-2xl mb-4">
             <input id="modalAmount" type="number" placeholder="Amount (₹)" class="w-full p-3 border rounded-2xl mb-4">
+
+            <!-- Online / Offline -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Spending Type</label>
+                <div class="flex gap-3">
+                    <button onclick="selectType(this)" data-type="Online" class="flex-1 py-3 border-2 border-emerald-500 rounded-2xl font-medium bg-emerald-50 text-emerald-700">📱 Online</button>
+                    <button onclick="selectType(this)" data-type="Offline" class="flex-1 py-3 border-2 border-amber-500 rounded-2xl font-medium bg-amber-50 text-amber-700">🛒 Offline</button>
+                </div>
+            </div>
+
             <select id="modalCategory" class="w-full p-3 border rounded-2xl mb-6">
                 <option>Food & Dining</option>
                 <option>Groceries</option>
@@ -86,6 +94,7 @@
                 <option>Clothes & Fashion</option>
                 <option>Miscellaneous</option>
             </select>
+
             <div class="flex gap-4">
                 <button onclick="addExpense()" class="flex-1 bg-green-600 text-white py-4 rounded-2xl font-medium">Add Expense</button>
                 <button onclick="hideModal()" class="flex-1 bg-gray-200 py-4 rounded-2xl font-medium">Cancel</button>
@@ -111,21 +120,27 @@
         const auth = firebase.auth();
 
         let expenses = [];
+        let selectedType = "Online";
+
+        function selectType(btn) {
+            document.querySelectorAll('#addModal button[data-type]').forEach(b => {
+                b.classList.remove('border-indigo-600', 'ring-2');
+            });
+            btn.classList.add('border-indigo-600', 'ring-2');
+            selectedType = btn.dataset.type;
+        }
 
         // Password Toggle
         document.getElementById('togglePassword').addEventListener('click', function() {
             const pwd = document.getElementById('password');
-            if (pwd.type === "password") {
-                pwd.type = "text"; this.textContent = "🙈";
-            } else {
-                pwd.type = "password"; this.textContent = "👁️";
-            }
+            pwd.type = pwd.type === "password" ? "text" : "password";
+            this.textContent = pwd.type === "password" ? "👁️" : "🙈";
         });
 
         function handleSignUp() {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            if (!email || password.length < 6) return alert("Invalid input");
+            if (!email || password.length < 6) return alert("Please enter valid email and password");
             auth.createUserWithEmailAndPassword(email, password)
                 .then(user => showApp(user.user))
                 .catch(err => alert(err.message));
@@ -140,9 +155,7 @@
                 .catch(err => alert(err.message));
         }
 
-        function handleLogOut() {
-            auth.signOut().then(() => location.reload());
-        }
+        function handleLogOut() { location.reload(); }
 
         function showApp(user) {
             document.getElementById('authSection').classList.add('hidden');
@@ -163,22 +176,24 @@
 
         function renderDashboard() {
             const total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-            document.getElementById('monthlyTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
-
+            document.getElementById('monthlyTotal').textContent = `₹${total.toLocaleString('en-IN') || 0}`;
             renderSidebarCategories();
             renderMainCategories();
-            renderRecentTransactions();
+            renderRecent();
         }
 
         function renderSidebarCategories() {
-            // Simple breakdown
-            const html = `
-                <div class="space-y-3 text-sm">
-                    <div class="flex justify-between"><span>Food & Dining</span><span class="font-medium">₹4,820</span></div>
-                    <div class="flex justify-between"><span>E-commerce</span><span class="font-medium">₹7,450</span></div>
-                    <div class="flex justify-between"><span>Groceries</span><span class="font-medium">₹5,980</span></div>
-                    <div class="flex justify-between"><span>Petrol</span><span class="font-medium">₹3,200</span></div>
-                </div>`;
+            const cats = ["Food & Dining", "E-commerce", "Groceries", "Petrol / Fuel", "Ride & Logistics"];
+            let html = '';
+            cats.forEach(cat => {
+                const filtered = expenses.filter(e => e.category === cat);
+                const sum = filtered.reduce((a,b) => a + Number(b.amount), 0);
+                html += `
+                    <div class="flex justify-between text-sm">
+                        <span>${cat}</span>
+                        <span class="font-medium">₹${sum || 0}</span>
+                    </div>`;
+            });
             document.getElementById('sidebarCategories').innerHTML = html;
         }
 
@@ -187,68 +202,16 @@
             let html = '';
             cats.forEach(cat => {
                 const filtered = expenses.filter(e => e.category === cat);
-                const sum = filtered.reduce((a, b) => a + Number(b.amount), 0);
+                const sum = filtered.reduce((a,b) => a + Number(b.amount), 0);
                 html += `
                     <div class="bg-white p-6 rounded-3xl card-hover shadow">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between">
                             <div>
                                 <h4 class="font-semibold">${cat}</h4>
                                 <p class="text-sm text-gray-500">${filtered.length} transactions</p>
                             </div>
-                            <p class="text-2xl font-bold text-indigo-600">₹${sum}</p>
+                            <p class="text-2xl font-bold ${sum > 0 ? 'text-indigo-600' : 'text-gray-400'}">₹${sum || 0}</p>
                         </div>
                     </div>`;
             });
-            document.getElementById('mainCategories').innerHTML = html;
-        }
-
-        function renderRecentTransactions() {
-            const container = document.getElementById('recentList');
-            container.innerHTML = expenses.slice(0, 8).map(exp => `
-                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
-                    <div>
-                        <p class="font-medium">${exp.desc}</p>
-                        <p class="text-xs text-gray-500">${exp.date} • ${exp.category}</p>
-                    </div>
-                    <p class="font-bold text-red-600">-₹${exp.amount}</p>
-                </div>
-            `).join('') || '<p class="text-gray-400 text-center py-10">No expenses yet. Add your first one!</p>';
-        }
-
-        function showAddModal() {
-            document.getElementById('addModal').classList.remove('hidden');
-            document.getElementById('modalDate').valueAsDate = new Date();
-        }
-
-        function hideModal() {
-            document.getElementById('addModal').classList.add('hidden');
-        }
-
-        function addExpense() {
-            const desc = document.getElementById('modalDesc').value.trim();
-            const amount = document.getElementById('modalAmount').value;
-            const category = document.getElementById('modalCategory').value;
-            const date = document.getElementById('modalDate').value;
-
-            if (!desc || !amount) return alert("Please fill description and amount");
-
-            expenses.unshift({
-                id: Date.now(),
-                date: date || new Date().toISOString().split('T')[0],
-                desc: desc,
-                amount: Number(amount),
-                category: category
-            });
-
-            saveExpenses();
-            hideModal();
-            alert("✅ Expense added successfully!");
-        }
-
-        // Auth State
-        auth.onAuthStateChanged(user => {
-            if (user) showApp(user);
-        });
-    </script>
-</body>
-</html>
+            document.getElementById
