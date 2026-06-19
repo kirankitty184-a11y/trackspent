@@ -1,4 +1,4 @@
-<!D<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,11 +17,13 @@
     <div id="authSection" class="max-w-md mx-auto mt-12 bg-white rounded-3xl shadow-2xl p-8">
         <h2 class="text-3xl font-bold text-center text-indigo-700">TrackSpent</h2>
         <p class="text-center text-gray-500 mt-2 mb-8">"See It. Limit It. Own It."</p>
+        
         <input type="email" id="email" placeholder="Email" class="w-full px-4 py-3 border rounded-2xl mb-4">
         <div class="relative">
             <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border rounded-2xl">
             <span id="togglePassword" class="absolute right-4 top-4 cursor-pointer text-2xl">👁️</span>
         </div>
+        
         <button onclick="handleSignUp()" class="w-full mt-6 bg-indigo-600 text-white py-4 rounded-2xl font-semibold">Sign Up</button>
         <button onclick="handleLogIn()" class="w-full mt-3 bg-gray-100 text-gray-700 py-4 rounded-2xl font-semibold">Log In</button>
     </div>
@@ -128,6 +130,7 @@
             selectedType = btn.dataset.type;
         }
 
+        // Password Toggle
         document.getElementById('togglePassword').addEventListener('click', function() {
             const pwd = document.getElementById('password');
             pwd.type = pwd.type === "password" ? "text" : "password";
@@ -158,7 +161,7 @@
                 document.getElementById('authSection').classList.remove('hidden');
                 document.getElementById('email').value = '';
                 document.getElementById('password').value = '';
-            }).catch(err => console.error(err));
+            });
         }
 
         function showApp(user) {
@@ -218,266 +221,6 @@
         function renderRecent() {
             const container = document.getElementById('recentList');
             container.innerHTML = expenses.slice(0,6).map(e => `
-                <div class="flex justify-between bg-gray-50 p-4 rounded-2xl">
-                    <div>
-                        <p class="font-medium">${e.desc}</p>
-                        <p class="text-xs text-gray-500">${e.date}</p>
-                    </div>
-                    <p class="font-semibold text-red-600">-₹${e.amount}</p>
-                </div>
-            `).join('') || '<p class="text-gray-400 text-center py-12">No expenses yet</p>';
-        }
-
-        function showAddModal() {
-            document.getElementById('addModal').classList.remove('hidden');
-            document.getElementById('modalDate').valueAsDate = new Date();
-        }
-
-        function hideModal() {
-            document.getElementById('addModal').classList.add('hidden');
-        }
-
-        function addExpense() {
-            const desc = document.getElementById('modalDesc').value.trim();
-            const amount = parseFloat(document.getElementById('modalAmount').value);
-            const category = document.getElementById('modalCategory').value;
-            const date = document.getElementById('modalDate').value;
-
-            if (!desc || !amount) return alert("Please fill description and amount");
-
-            expenses.unshift({
-                id: Date.now(),
-                date: date,
-                desc: desc,
-                amount: amount,
-                category: category
-            });
-
-            saveExpenses();
-            hideModal();
-            alert("✅ Expense added successfully!");
-        }
-
-        auth.onAuthStateChanged(user => {
-            if (user) showApp(user);
-        });
-    </script>
-</body>
-</html>OCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrackSpent</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body class="bg-gray-50">
-
-    <!-- Auth -->
-    <div id="authSection" class="max-w-md mx-auto mt-12 bg-white rounded-3xl shadow-2xl p-8">
-        <h2 class="text-3xl font-bold text-center text-indigo-700">TrackSpent</h2>
-        <p class="text-center text-gray-500 mt-2 mb-8">"See It. Limit It. Own It."</p>
-        <input type="email" id="email" placeholder="Email" class="w-full px-4 py-3 border rounded-2xl mb-4">
-        <div class="relative">
-            <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 border rounded-2xl">
-            <span id="togglePassword" class="absolute right-4 top-4 cursor-pointer text-2xl">👁️</span>
-        </div>
-        <button onclick="handleSignUp()" class="w-full mt-6 bg-indigo-600 text-white py-4 rounded-2xl font-semibold">Sign Up</button>
-        <button onclick="handleLogIn()" class="w-full mt-3 bg-gray-100 text-gray-700 py-4 rounded-2xl font-semibold">Log In</button>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="appSection" class="hidden min-h-screen">
-        <header class="bg-white border-b px-8 py-5 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-indigo-700">TrackSpent</h1>
-                <p class="text-xs text-gray-500">"Track Daily, Spend Wisely"</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <span id="userEmail" class="text-sm font-medium text-gray-600"></span>
-                <button onclick="handleLogOut()" class="px-6 py-2 bg-red-100 text-red-600 rounded-2xl text-sm font-medium">Logout</button>
-            </div>
-        </header>
-
-        <div class="max-w-7xl mx-auto p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Left Sidebar -->
-                <div class="lg:col-span-3 bg-white rounded-3xl p-6 shadow">
-                    <h3 class="font-semibold mb-2">Total This Month</h3>
-                    <p id="monthlyTotal" class="text-5xl font-bold text-indigo-600">₹0</p>
-                    <h4 class="font-medium mt-8 mb-4">Category Breakdown</h4>
-                    <div id="sidebarCategories" class="space-y-4 text-sm"></div>
-                </div>
-
-                <!-- Main -->
-                <div class="lg:col-span-6 space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-3xl font-semibold">June 2025</h2>
-                        <button onclick="showAddModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-indigo-700">
-                            <i class="fas fa-plus"></i> Add New Expense
-                        </button>
-                    </div>
-                    <div id="mainCategories" class="space-y-4"></div>
-                </div>
-
-                <!-- Right Sidebar -->
-                <div class="lg:col-span-3 space-y-6">
-                    <div class="bg-white rounded-3xl p-6 shadow">
-                        <h3 class="font-semibold mb-4">Recent Transactions</h3>
-                        <div id="recentList" class="space-y-3"></div>
-                    </div>
-                    <div class="bg-white rounded-3xl p-6 shadow">
-                        <h3 class="font-semibold mb-4">Compared to Yesterday</h3>
-                        <div id="comparison" class="space-y-3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Expense Modal -->
-    <div id="addModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-        <div class="bg-white rounded-3xl p-8 w-full max-w-md">
-            <h3 class="text-2xl font-semibold mb-6">Add New Expense</h3>
-            <input id="modalDate" type="date" class="w-full p-3 border rounded-2xl mb-4">
-            <input id="modalDesc" type="text" placeholder="Description / Item" class="w-full p-3 border rounded-2xl mb-4">
-            <input id="modalAmount" type="number" placeholder="Amount (₹)" class="w-full p-3 border rounded-2xl mb-4">
-
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Type</label>
-                <div class="flex gap-3">
-                    <button onclick="selectType(this)" data-type="Online" class="flex-1 py-3 border-2 border-emerald-500 rounded-2xl font-medium bg-emerald-50">📱 Online</button>
-                    <button onclick="selectType(this)" data-type="Offline" class="flex-1 py-3 border-2 border-amber-500 rounded-2xl font-medium bg-amber-50">🛒 Offline</button>
-                </div>
-            </div>
-
-            <select id="modalCategory" class="w-full p-3 border rounded-2xl mb-6">
-                <option>Food & Dining</option>
-                <option>Groceries</option>
-                <option>E-commerce</option>
-                <option>Petrol / Fuel</option>
-                <option>Ride & Logistics</option>
-                <option>Clothes & Fashion</option>
-                <option>Miscellaneous</option>
-            </select>
-
-            <div class="flex gap-4">
-                <button onclick="addExpense()" class="flex-1 bg-green-600 text-white py-4 rounded-2xl">Add Expense</button>
-                <button onclick="hideModal()" class="flex-1 bg-gray-200 py-4 rounded-2xl">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-
-    <script>
-        const firebaseConfig = {
-          apiKey: "AIzaSyBM8GjRfW5j7p50NPBEbuRyISjN99Wn3gs",
-          authDomain: "trackspent-d2d17.firebaseapp.com",
-          projectId: "trackspent-d2d17",
-          storageBucket: "trackspent-d2d17.firebasestorage.app",
-          messagingSenderId: "74213513134",
-          appId: "1:74213513134:web:c44737431f175a030f1a3f"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        let expenses = [];
-        let selectedType = "Online";
-
-        function selectType(btn) {
-            document.querySelectorAll('#addModal button[data-type]').forEach(b => b.classList.remove('ring-2', 'ring-indigo-500'));
-            btn.classList.add('ring-2', 'ring-indigo-500');
-            selectedType = btn.dataset.type;
-        }
-
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const pwd = document.getElementById('password');
-            pwd.type = pwd.type === "password" ? "text" : "password";
-            this.textContent = pwd.type === "password" ? "🙈" : "👁️";
-        });
-
-        function handleSignUp() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if (!email || password.length < 6) return alert("Please enter valid email and password");
-            auth.createUserWithEmailAndPassword(email, password)
-                .then(user => showApp(user.user))
-                .catch(err => alert(err.message));
-        }
-
-        function handleLogIn() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if (!email || !password) return alert("Please fill all fields");
-            auth.signInWithEmailAndPassword(email, password)
-                .then(user => showApp(user.user))
-                .catch(err => alert(err.message));
-        }
-
-        function handleLogOut() { location.reload(); }
-
-        function showApp(user) {
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('appSection').classList.remove('hidden');
-            document.getElementById('userEmail').textContent = user.email;
-            loadExpenses();
-        }
-
-        function loadExpenses() {
-            expenses = JSON.parse(localStorage.getItem('trackspent_expenses')) || [];
-            renderDashboard();
-        }
-
-        function saveExpenses() {
-            localStorage.setItem('trackspent_expenses', JSON.stringify(expenses));
-            renderDashboard();
-        }
-
-        function renderDashboard() {
-            const total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-            document.getElementById('monthlyTotal').textContent = `₹${total.toLocaleString('en-IN') || 0}`;
-            renderSidebar();
-            renderMainCategories();
-            renderRecent();
-        }
-
-        function renderSidebar() {
-            const cats = ["Food & Dining","E-commerce","Groceries","Petrol / Fuel","Ride & Logistics"];
-            let html = '';
-            cats.forEach(cat => {
-                const sum = expenses.filter(e => e.category === cat).reduce((a,b) => a + Number(b.amount), 0);
-                html += `<div class="flex justify-between"><span>${cat}</span><span class="font-medium">₹${sum || 0}</span></div>`;
-            });
-            document.getElementById('sidebarCategories').innerHTML = html;
-        }
-
-        function renderMainCategories() {
-            const cats = ["Food & Dining","Groceries","E-commerce","Petrol / Fuel","Ride & Logistics"];
-            let html = '';
-            cats.forEach(cat => {
-                const sum = expenses.filter(e => e.category === cat).reduce((a,b) => a + Number(b.amount), 0);
-                html += `
-                    <div class="bg-white p-6 rounded-3xl shadow card-hover">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h4 class="font-semibold">${cat}</h4>
-                                <p class="text-sm text-gray-500">${expenses.filter(e => e.category === cat).length} transactions</p>
-                            </div>
-                            <p class="text-3xl font-bold ${sum > 0 ? 'text-indigo-600' : 'text-gray-400'}">₹${sum || 0}</p>
-                        </div>
-                    </div>`;
-            });
-            document.getElementById('mainCategories').innerHTML = html;
-        }
-
-        function renderRecent() {
-            const container = document.getElementById('recentList');
-            container.innerHTML = expenses.slice(0,5).map(e => `
                 <div class="flex justify-between bg-gray-50 p-4 rounded-2xl">
                     <div>
                         <p class="font-medium">${e.desc}</p>
