@@ -13,7 +13,7 @@
 </head>
 <body class="bg-gray-50">
 
-    <!-- Auth Screen -->
+    <!-- Auth -->
     <div id="authSection" class="max-w-md mx-auto mt-12 bg-white rounded-3xl shadow-2xl p-8">
         <h2 class="text-3xl font-bold text-center text-indigo-700">TrackSpent</h2>
         <p class="text-center text-gray-500 mt-2 mb-8">"See It. Limit It. Own It."</p>
@@ -41,7 +41,6 @@
 
         <div class="max-w-7xl mx-auto p-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Left Sidebar -->
                 <div class="lg:col-span-3 bg-white rounded-3xl p-6 shadow">
                     <h3 class="font-semibold mb-2">Total This Month</h3>
                     <p id="monthlyTotal" class="text-5xl font-bold text-indigo-600">₹0</p>
@@ -49,7 +48,6 @@
                     <div id="sidebarCategories" class="space-y-4 text-sm"></div>
                 </div>
 
-                <!-- Main Content -->
                 <div class="lg:col-span-6 space-y-6">
                     <div class="flex justify-between items-center">
                         <h2 class="text-3xl font-semibold">June 2026</h2>
@@ -60,7 +58,6 @@
                     <div id="mainCategories" class="space-y-4"></div>
                 </div>
 
-                <!-- Right Sidebar -->
                 <div class="lg:col-span-3 bg-white rounded-3xl p-6 shadow">
                     <h3 class="font-semibold mb-4">Recent Transactions</h3>
                     <div id="recentList" class="space-y-3"></div>
@@ -128,19 +125,20 @@
         let selectedType = "Online";
 
         const subCategories = {
-            "Food & Dining": ["Breakfast", "Lunch", "Dinner", "Snacks", "Coffee/Tea", "Street Food"],
-            "Groceries": ["Vegetables", "Fruits", "Dairy", "Rice", "Oil", "Snacks"],
-            "E-commerce": ["Electronics", "Clothing", "Home & Kitchen", "Beauty", "Books"],
-            "Petrol / Fuel": ["Petrol", "Diesel", "CNG"],
-            "Ride & Logistics": ["Uber", "Ola", "Rapido", "Auto", "Bus"],
-            "Clothes & Fashion": ["Shirt", "Pants", "Shoes", "Traditional"],
-            "Miscellaneous": ["Health", "Entertainment", "Bills", "Gifts", "Other"]
+            "Food & Dining": ["Breakfast", "Lunch", "Dinner", "Snacks", "Coffee/Tea", "Street Food", "Restaurant"],
+            "Groceries": ["Vegetables", "Fruits", "Dairy", "Rice", "Oil", "Snacks", "Household Items"],
+            "E-commerce": ["Electronics", "Clothing", "Home & Kitchen", "Beauty Products", "Books", "Mobile Accessories"],
+            "Petrol / Fuel": ["Petrol", "Diesel", "CNG", "EV Charging"],
+            "Ride & Logistics": ["Uber", "Ola", "Rapido", "Auto Rickshaw", "Bus", "Train"],
+            "Clothes & Fashion": ["Men's Wear", "Women's Wear", "Kids Wear", "Shoes", "Accessories", "Traditional Wear"],
+            "Miscellaneous": ["Health & Medicine", "Entertainment", "Bills", "Gifts", "Education", "Other"]
         };
 
         function updateSubCategories() {
             const category = document.getElementById('modalCategory').value;
             const subSelect = document.getElementById('modalSubCategory');
             subSelect.innerHTML = '<option value="">Select Sub Category</option>';
+            
             if (subCategories[category]) {
                 subCategories[category].forEach(sub => {
                     subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
@@ -195,11 +193,10 @@
         function loadExpenses() {
             expenses = JSON.parse(localStorage.getItem('trackspent_expenses')) || [];
             if (expenses.length === 0) {
-                // Sample data for first time users
                 expenses = [
-                    {id:1, date:"2025-06-18", desc:"Swiggy Dinner", amount:450, category:"Food & Dining", type:"Online"},
-                    {id:2, date:"2025-06-17", desc:"Petrol Fill", amount:1200, category:"Petrol / Fuel", type:"Offline"},
-                    {id:3, date:"2025-06-16", desc:"Amazon Shopping", amount:899, category:"E-commerce", type:"Online"}
+                    {id:1, date:"2025-06-18", desc:"Swiggy Dinner", amount:450, category:"Food & Dining"},
+                    {id:2, date:"2025-06-17", desc:"Petrol Fill", amount:1200, category:"Petrol / Fuel"},
+                    {id:3, date:"2025-06-16", desc:"Amazon Shopping", amount:899, category:"E-commerce"}
                 ];
                 saveExpenses();
             }
@@ -264,6 +261,7 @@
         function showAddModal() {
             document.getElementById('addModal').classList.remove('hidden');
             document.getElementById('modalDate').valueAsDate = new Date();
+            updateSubCategories();
         }
 
         function hideModal() {
