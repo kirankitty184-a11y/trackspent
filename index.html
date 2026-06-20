@@ -10,8 +10,8 @@
     <style>
         body { font-family: 'Segoe UI', system-ui, sans-serif; }
         .sidebar-link { transition: all 0.2s; }
-        .sidebar-link:hover { background-color: #f3f4f6; }
         .sidebar-active { background-color: #4f46e5; color: white; }
+        .card-hover:hover { transform: translateY(-4px); }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -29,7 +29,7 @@
         <button onclick="handleLogIn()" class="w-full mt-3 bg-gray-100 text-gray-700 py-4 rounded-2xl font-semibold">Log In</button>
     </div>
 
-    <!-- Main App -->
+    <!-- Full Dashboard -->
     <div id="appSection" class="hidden flex h-screen">
         <!-- Premium Sidebar -->
         <div class="w-64 bg-white border-r shadow-sm p-4 overflow-auto">
@@ -44,7 +44,7 @@
             </nav>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main Area -->
         <div class="flex-1 overflow-auto">
             <header class="bg-white border-b px-8 py-5 flex justify-between items-center">
                 <h2 id="pageTitle" class="text-2xl font-semibold">Overview</h2>
@@ -55,7 +55,7 @@
             </header>
 
             <div class="p-8" id="mainContent">
-                <!-- Content loaded dynamically -->
+                <!-- Dynamic Content -->
             </div>
         </div>
     </div>
@@ -131,7 +131,9 @@
             const subSelect = document.getElementById('modalSubCategory');
             subSelect.innerHTML = '<option value="">Select Sub Category</option>';
             if (subCategories[category]) {
-                subCategories[category].forEach(sub => subSelect.innerHTML += `<option value="${sub}">${sub}</option>`);
+                subCategories[category].forEach(sub => {
+                    subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+                });
             }
         }
 
@@ -189,12 +191,30 @@
                 ];
                 localStorage.setItem('trackspent_expenses', JSON.stringify(expenses));
             }
-            renderOverview();
+            switchTab(0);
         }
 
         function saveExpenses() {
             localStorage.setItem('trackspent_expenses', JSON.stringify(expenses));
-            renderOverview();
+            switchTab(0);
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('sidebar-active'));
+            const links = document.querySelectorAll('a[onclick^="switchTab"]');
+            if (links[tab]) links[tab].classList.add('sidebar-active');
+
+            const content = document.getElementById('mainContent');
+            if (tab === 0) {
+                document.getElementById('pageTitle').textContent = "Overview";
+                renderOverview();
+            } else if (tab === 1) {
+                document.getElementById('pageTitle').textContent = "Budgets";
+                content.innerHTML = `<div class="bg-white p-8 rounded-3xl shadow text-center"><h3 class="text-xl">Monthly Budget</h3><input type="number" value="15000" class="border p-3 rounded-2xl mt-4 w-48 text-center"></div>`;
+            } else {
+                document.getElementById('pageTitle').textContent = "Coming Soon";
+                content.innerHTML = `<div class="text-center py-20 text-gray-400">This feature is under development</div>`;
+            }
         }
 
         function renderOverview() {
@@ -210,10 +230,9 @@
             });
             document.getElementById('sidebarCategories').innerHTML = html;
 
-            // Pie Chart
-            const ctx = document.createElement('canvas');
-            ctx.height = 180;
-            document.getElementById('mainContent').innerHTML = `
+            // Main Content with Pie Chart
+            const content = document.getElementById('mainContent');
+            content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-3xl shadow">
                         <h3 class="text-sm text-gray-500">Total Spent</h3>
@@ -228,7 +247,7 @@
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-3xl shadow">
-                    <h3 class="font-semibold mb-4">Spending Distribution</h3>
+                    <h3 class="font-semibold mb-4">Spending by Category</h3>
                     <canvas id="pieChart" height="180"></canvas>
                 </div>
             `;
