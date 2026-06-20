@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrackSpent</title>
+    <title>TrackSpent - Expense Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -52,7 +52,7 @@
                 <!-- Main Content -->
                 <div class="lg:col-span-6 space-y-6">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-3xl font-semibold">June 2025</h2>
+                        <h2 id="currentMonth" class="text-3xl font-semibold">June 2026</h2>
                         <button onclick="showAddModal()" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-indigo-700">
                             <i class="fas fa-plus"></i> Add New Expense
                         </button>
@@ -73,7 +73,9 @@
     <div id="addModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
         <div class="bg-white rounded-3xl p-8 w-full max-w-md">
             <h3 class="text-2xl font-semibold mb-6">Add New Expense</h3>
+            
             <input id="modalDate" type="date" class="w-full p-3 border rounded-2xl mb-4">
+            
             <input id="modalDesc" type="text" placeholder="Description / Item" class="w-full p-3 border rounded-2xl mb-4">
             <input id="modalAmount" type="number" placeholder="Amount (₹)" class="w-full p-3 border rounded-2xl mb-4">
 
@@ -156,8 +158,6 @@
             auth.signOut().then(() => {
                 document.getElementById('appSection').classList.add('hidden');
                 document.getElementById('authSection').classList.remove('hidden');
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
             });
         }
 
@@ -165,18 +165,7 @@
             document.getElementById('authSection').classList.add('hidden');
             document.getElementById('appSection').classList.remove('hidden');
             document.getElementById('userEmail').textContent = user.email;
-            
-            // Load sample data for first time users
-            if (!localStorage.getItem('trackspent_expenses')) {
-                expenses = [
-                    {id:1, date:"2025-06-18", desc:"Swiggy Dinner", amount:450, category:"Food & Dining"},
-                    {id:2, date:"2025-06-17", desc:"Petrol", amount:1200, category:"Petrol / Fuel"},
-                    {id:3, date:"2025-06-16", desc:"Amazon Earphones", amount:899, category:"E-commerce"}
-                ];
-                saveExpenses();
-            } else {
-                loadExpenses();
-            }
+            loadExpenses();
         }
 
         function loadExpenses() {
