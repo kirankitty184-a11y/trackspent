@@ -43,7 +43,7 @@
             </nav>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main Area -->
         <div class="flex-1 overflow-auto">
             <header class="bg-white border-b px-8 py-5 flex justify-between items-center">
                 <h2 id="pageTitle" class="text-2xl font-semibold">Overview</h2>
@@ -94,7 +94,6 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -108,11 +107,8 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
 
-        let currentUser = null;
         let expenses = [];
-        let monthlyBudget = 15000;
         let selectedType = "Online";
 
         const subCategories = {
@@ -142,7 +138,6 @@
             selectedType = btn.dataset.type;
         }
 
-        // Password Toggle
         document.getElementById('togglePassword').addEventListener('click', function() {
             const pwd = document.getElementById('password');
             pwd.type = pwd.type === "password" ? "text" : "password";
@@ -175,40 +170,43 @@
         }
 
         function showApp(user) {
-            currentUser = user;
             document.getElementById('authSection').classList.add('hidden');
             document.getElementById('appSection').classList.remove('hidden');
             document.getElementById('userEmail').textContent = user.email;
-            loadUserData();
+            loadExpenses();
         }
 
-        async function loadUserData() {
-            if (!currentUser) return;
-            const snapshot = await db.collection('users').doc(currentUser.uid).collection('expenses').get();
-            expenses = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-            renderOverview();
+        function loadExpenses() {
+            expenses = JSON.parse(localStorage.getItem('trackspent_expenses')) || [];
+            if (expenses.length === 0) {
+                expenses = [
+                    {id:1, date:"2025-06-18", desc:"Swiggy Dinner", amount:450, category:"Food & Dining"},
+                    {id:2, date:"2025-06-17", desc:"Petrol Fill", amount:1200, category:"Petrol / Fuel"},
+                    {id:3, date:"2025-06-16", desc:"Amazon Shopping", amount:899, category:"E-commerce"}
+                ];
+                localStorage.setItem('trackspent_expenses', JSON.stringify(expenses));
+            }
+            switchTab(0);
         }
 
-        async function addExpense() {
-            const desc = document.getElementById('modalDesc').value.trim();
-            const amount = parseFloat(document.getElementById('modalAmount').value);
-            const category = document.getElementById('modalCategory').value;
-            const date = document.getElementById('modalDate').value;
+        function saveExpenses() {
+            localStorage.setItem('trackspent_expenses', JSON.stringify(expenses));
+            switchTab(0);
+        }
 
-            if (!desc || !amount || !category) return alert("Please fill all fields");
+        function switchTab(tab) {
+            document.querySelectorAll('a[onclick^="switchTab"]').forEach(link => link.classList.remove('sidebar-active'));
+            const links = document.querySelectorAll('a[onclick^="switchTab"]');
+            if (links[tab]) links[tab].classList.add('sidebar-active');
 
-            await db.collection('users').doc(currentUser.uid).collection('expenses').add({
-                date: date,
-                desc: desc,
-                amount: amount,
-                category: category,
-                type: selectedType,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            hideModal();
-            loadUserData();
-            alert("✅ Expense added successfully!");
+            const content = document.getElementById('mainContent');
+            if (tab === 0) {
+                document.getElementById('pageTitle').textContent = "Overview";
+                renderOverview();
+            } else {
+                document.getElementById('pageTitle').textContent = ["Budgets", "Reports", "Insights"][tab-1];
+                content.innerHTML = `<div class="text-center py-20 text-gray-400">This feature is coming soon</div>`;
+            }
         }
 
         function renderOverview() {
@@ -224,7 +222,7 @@
             });
             document.getElementById('sidebarCategories').innerHTML = html;
 
-            // Main Content with Pie Chart
+            // Main Content
             const content = document.getElementById('mainContent');
             content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -232,16 +230,9 @@
                         <h3 class="text-sm text-gray-500">Total Spent</h3>
                         <p class="text-4xl font-bold text-indigo-600">₹${total}</p>
                     </div>
-                    <div class="bg-white p-6 rounded-3xl shadow">
-                        <h3 class="text-sm text-gray-500">Monthly Budget</h3>
-                        <p class="text-4xl font-bold text-emerald-600">₹${monthlyBudget}</p>
-                        <div class="h-2.5 bg-gray-200 rounded-full mt-4">
-                            <div class="h-2.5 bg-emerald-500 rounded-full" style="width: ${Math.min((total/monthlyBudget)*100, 100)}%"></div>
-                        </div>
-                    </div>
                 </div>
                 <div class="bg-white p-6 rounded-3xl shadow">
-                    <h3 class="font-semibold mb-4">Spending Distribution</h3>
+                    <h3 class="font-semibold mb-4">Spending by Category</h3>
                     <canvas id="pieChart" height="180"></canvas>
                 </div>
             `;
@@ -266,6 +257,27 @@
 
         function hideModal() {
             document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function addExpense() {
+            const desc = document.getElementById('modalDesc').value.trim();
+            const amount = parseFloat(document.getElementById('modalAmount').value);
+            const category = document.getElementById('modalCategory').value;
+            const date = document.getElementById('modalDate').value;
+
+            if (!desc || !amount) return alert("Please fill description and amount");
+
+            expenses.unshift({
+                id: Date.now(),
+                date: date,
+                desc: desc,
+                amount: amount,
+                category: category
+            });
+
+            saveExpenses();
+            hideModal();
+            alert("✅ Expense added successfully!");
         }
 
         auth.onAuthStateChanged(user => {
