@@ -11,6 +11,27 @@
         body { font-family: 'Segoe UI', system-ui, sans-serif; }
         .sidebar-active { background-color: #4f46e5; color: white; }
         .card-hover:hover { transform: translateY(-4px); }
+        .floating-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #4f46e5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            z-index: 50;
+            transition: all 0.3s;
+        }
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.5);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -31,7 +52,7 @@
     <!-- Dashboard -->
     <div id="appSection" class="hidden flex h-screen">
         <!-- Sidebar -->
-        <div class="w-64 bg-white border-r p-4 overflow-auto">
+        <div class="w-64 bg-white border-r shadow-sm p-4 overflow-auto">
             <div class="flex items-center gap-3 mb-8 px-3">
                 <h1 class="text-2xl font-bold text-indigo-700">TrackSpent</h1>
             </div>
@@ -55,6 +76,11 @@
             <div class="p-8" id="mainContent"></div>
         </div>
     </div>
+
+    <!-- Floating Quick Add Button -->
+    <button onclick="showAddModal()" class="floating-btn">
+        <i class="fas fa-plus"></i>
+    </button>
 
     <!-- Add Expense Modal -->
     <div id="addModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
@@ -126,7 +152,9 @@
             const subSelect = document.getElementById('modalSubCategory');
             subSelect.innerHTML = '<option value="">Select Sub Category</option>';
             if (subCategories[category]) {
-                subCategories[category].forEach(sub => subSelect.innerHTML += `<option value="${sub}">${sub}</option>`);
+                subCategories[category].forEach(sub => {
+                    subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+                });
             }
         }
 
@@ -211,7 +239,6 @@
             const total = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
             document.getElementById('monthlyTotal').textContent = `₹${total.toLocaleString('en-IN') || 0}`;
 
-            // Sidebar
             const cats = ["Food & Dining","E-commerce","Groceries","Petrol / Fuel","Ride & Logistics"];
             let html = '';
             cats.forEach(cat => {
@@ -220,7 +247,6 @@
             });
             document.getElementById('sidebarCategories').innerHTML = html;
 
-            // Main Content
             const content = document.getElementById('mainContent');
             content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
